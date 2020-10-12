@@ -2,9 +2,10 @@
 <div id="app">
   <slide :closeOnNavigation="true" class="slider">
     <router-link to="/">Home it is great</router-link>
+    <router-link to="/myClasses">My Classes</router-link>
     <router-link to="/about">About</router-link>
   </slide>
-  <h1 class="text-center text-indigo-500 text-3xl margin-top-hamburger">Pods</h1>
+  <h1 class="text-center margin-top-hamburger">Pods</h1>
   <router-view/>
 </div>
 </template>
