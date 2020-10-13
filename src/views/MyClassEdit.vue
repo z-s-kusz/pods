@@ -1,5 +1,16 @@
 <template>
 <main class="container">
+  <section class="row align-items-center border border-secondary">
+    <div class="input-group">
+      <span class="input-group-text">Class Name</span>
+      <input type="text" v-model="myClassName" class="form-control" />
+    </div>
+    <div class="input-group">
+      <span class="input-group-text">Name Students Will See</span>
+      <input type="text" v-model="myClassDisplayName" class="form-control" />
+    </div>
+  </section>
+
   <div class="row align-items-center border border-secondary">
     <p v-if="students.length < 1" class="text-center">
       No Students added to this class yet.
@@ -36,6 +47,7 @@ export default {
   },
   created() {
     this.myClassId = this.$route.params.myClassId;
+    this.getClass();
   },
   methods: {
     addStudent() {
@@ -46,10 +58,38 @@ export default {
       this.students.push(newStudent);
     },
     getClass() {
-      localStorage.getItem(`class-${this.myClassId}`)
+      const myClassJSON = localStorage.getItem(`myClass_${this.myClassId}`);
+      if (!myClassJSON) {
+        return console.error('Error, no class found in localstorgae');
+      }
+      const myClass = JSON.parse(myClassJSON);
+      this.myClassName = myClass.myClassName;
+      this.myClassDisplayName = myClass.myClassDisplayName;
+      this.students = myClass.students;
     },
     saveMyClass() {
-
+      const classJSON = JSON.stringify({
+        myClassId: this.myClassId,
+        myClassName: this.myClassName,
+        myClassDisplayName: this.myClassDisplayName,
+        students: this.students,
+      });
+      localStorage.setItem(`myClass_${this.myClassId}`, classJSON);
+    },
+  },
+  // todo find a better way to autosave without deep watcher? or at least debounce it
+  watch: {
+    students: {
+      deep: true,
+      handler() {
+        this.saveMyClass();
+      },
+    },
+    myClassName() {
+      this.saveMyClass();
+    },
+    myClassDisplayName() {
+      this.saveMyClass();
     },
   },
 }

@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     getClass() {
-      localStorage.getItem(`class-${this.myClassId}`)
+      localStorage.getItem(`myClass_${this.myClassId}`)
     },
   },
 }
