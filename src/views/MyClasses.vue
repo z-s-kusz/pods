@@ -4,8 +4,7 @@
   <div v-for="myClass in myClasses" :key="myClass.id" class="card">
     <div class="card-body">
       <router-link :to="`myClass/${myClass.id}`">{{ myClass.name }}</router-link>
-      <button class="btn btn-dark">Edit Class</button>
-      <button class="btn btn-dark">Favorite</button>
+      <button class="btn btn-dark" @click="goToEdit(myClass.id)">Edit Class</button>
     </div>
 
   </div>
@@ -15,8 +14,8 @@
 
 <script>
 const myClasses = [
-  { name: 'Group A', id: 1 },
-  { name: 'Group B', id: 2 },
+  { name: 'Group A', id: '1' },
+  { name: 'Group B', id: '2' },
 ];
 export default {
   name: 'MyClasses',
@@ -24,6 +23,13 @@ export default {
     return {
       myClasses: [...myClasses],
     };
+  },
+  methods: {
+    goToEdit(id) {
+      this.$router.push({ 
+        path: `myClasses/${id}/edit`,
+      });
+    }
   },
 };
 </script>

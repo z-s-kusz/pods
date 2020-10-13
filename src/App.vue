@@ -1,7 +1,6 @@
 <template>
 <div id="app">
   <slide :closeOnNavigation="true" class="slider">
-    <router-link to="/">Home it is great</router-link>
     <router-link to="/myClasses">My Classes</router-link>
     <router-link to="/about">About</router-link>
   </slide>
