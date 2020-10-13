@@ -3,7 +3,7 @@
   <div class="row">
     <div class="col-sm">Class: {{ myClassDisplayName }}</div>
     <div class="col-sm">
-      <button class="btn btn-primary">{{ createGroupsButton }}</button>
+      <button class="btn btn-primary" @click="createGroups()">{{ createGroupsButton }}</button>
     </div>
     <div class="col-sm">
       <select class="form-select">
@@ -47,10 +47,51 @@ export default {
   },
   created() {
     this.myClassId = this.$route.params.myClassId;
+    this.getClass();
+    this.createGroupObjects();
   },
   methods: {
+    assignToGroups() {
+    },
+    createGroupObjects() {
+      for (let i = 0; i < this.numberOfGroups; i++) {
+        this.groups.push({
+          name: `Group ${i + 1}`,
+          students: [],
+        });
+      }
+    },
     getClass() {
-      localStorage.getItem(`myClass_${this.myClassId}`)
+      const myClassJSON = localStorage.getItem(`myClass_${this.myClassId}`);
+      if (!myClassJSON) {
+        return;
+      }
+      const myClass = JSON.parse(myClassJSON);
+      this.myClassDisplayName = myClass.myClassDisplayName;
+      this.students = this,this.shuffleArray(myClass.students);
+    },
+    getRandomIndex(max) {
+      return Math.floor(Math.random() * Math.floor(max));
+    },
+    shuffleArray(array) {
+      let currentIndex = array.length;
+      let temporaryValue;
+      let randomIndex;
+
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+      return array;
+    },
+  },
+  watch: {
+    numberOfGroups() {
+      this.createGroupObjects();
     },
   },
 }
