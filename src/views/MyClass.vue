@@ -7,18 +7,22 @@
     </div>
     <div class="col-sm">
       <select class="form-select">
-        <option v-for="(option, i) in nuberOfGroupsOptions" :key="i" :value="numberOfGroups">
+        <option v-for="(option, i) in numberOfGroupsOptions" :key="i" :value="numberOfGroups">
           {{ option }}
         </option>
       </select>
     </div>
   </div>
 
-  <div v-if="!studentsAreGrouped">
-
+  <div v-if="studentsAreGrouped" class="d-flex border border-primary">
+    <span>test show groups now</span>
   </div>
+
   <div v-else class="d-flex border border-primary">
-    <div v-for="student in students" :key="student.id">{{ student.name }}</div>
+    <span v-for="student in students" :key="student.name"
+      class="badge rounded-pill bg-primary m-3 p-2">
+      {{ student.name }}
+    </span>
   </div>
 
 </main>
@@ -64,11 +68,11 @@ export default {
     getClass() {
       const myClassJSON = localStorage.getItem(`myClass_${this.myClassId}`);
       if (!myClassJSON) {
-        return;
+        return console.error('Error getting myClass data');
       }
       const myClass = JSON.parse(myClassJSON);
       this.myClassDisplayName = myClass.myClassDisplayName;
-      this.students = this,this.shuffleArray(myClass.students);
+      this.students = this.shuffleArray(myClass.students);
     },
     getRandomIndex(max) {
       return Math.floor(Math.random() * Math.floor(max));

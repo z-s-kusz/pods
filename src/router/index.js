@@ -19,7 +19,7 @@ const routes = [
     component: () => import('../views/MyClassEdit.vue'),
   },
   {
-    path: '/myClasses/:myClassId',
+    path: '/myClass/:myClassId',
     name: 'MyClass',
     component: () => import('../views/MyClass.vue'),
   },
