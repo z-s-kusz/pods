@@ -3,19 +3,26 @@
   <div class="row">
     <div class="col-sm">Class: {{ myClassDisplayName }}</div>
     <div class="col-sm">
-      <button class="btn btn-primary" @click="createGroups()">{{ createGroupsButton }}</button>
+      <button class="btn btn-primary" @click="assignToGroups()">{{ createGroupsButton }}</button>
     </div>
     <div class="col-sm">
-      <select class="form-select">
-        <option v-for="(option, i) in numberOfGroupsOptions" :key="i" :value="numberOfGroups">
+      <select class="form-select" v-model="numberOfGroups">
+        <option v-for="(option, i) in numberOfGroupsOptions" :key="i" :value="option">
           {{ option }}
         </option>
       </select>
     </div>
   </div>
 
-  <div v-if="studentsAreGrouped" class="d-flex border border-primary">
-    <span>test show groups now</span>
+  <div v-if="studentsAreGrouped" class="d-flex justify-content-evenly border border-primary">
+    <div v-for="(group, groupIndex) in groups" :key="groupIndex"
+      class="border d-flex flex-column">
+      <div>{{ group.name }}</div>
+      <span v-for="(student, studentIndex) in group.students" :key="studentIndex"
+        class="badge rounded-pill bg-primary m-3 p-2">
+        {{ student.name }}
+      </span>
+    </div>
   </div>
 
   <div v-else class="d-flex border border-primary">
@@ -54,14 +61,31 @@ export default {
     this.getClass();
     this.createGroupObjects();
   },
+  // rule is {type: 'seperate', classMate: 'Jack'}[]
   methods: {
     assignToGroups() {
+      this.clearGroups();
+
+      let groupIndex = 0;
+      this.students.forEach(student => {
+        this.groups[groupIndex].students.push(student);
+        groupIndex = this.getNextGroupIndex(groupIndex);
+      });
+      this.studentsAreGrouped = true;
     },
     createGroupObjects() {
+      this.groups = [];
       for (let i = 0; i < this.numberOfGroups; i++) {
         this.groups.push({
           name: `Group ${i + 1}`,
           students: [],
+        });
+      }
+    },
+    clearGroups() {
+      if (this.studentsAreGrouped) {
+        this.groups.forEach(group => {
+          group.students = [];
         });
       }
     },
@@ -73,6 +97,11 @@ export default {
       const myClass = JSON.parse(myClassJSON);
       this.myClassDisplayName = myClass.myClassDisplayName;
       this.students = this.shuffleArray(myClass.students);
+    },
+    getNextGroupIndex(index) {
+      index++;
+      if (index < this.numberOfGroups) return index;
+      else return 0;
     },
     getRandomIndex(max) {
       return Math.floor(Math.random() * Math.floor(max));
