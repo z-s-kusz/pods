@@ -18,10 +18,10 @@ export default {
 }
 </script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Lora&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500&display=swap');
 
 * {
-  font-family: 'Lora', serif;
+  font-family: 'Josefin Sans', sans-serif;
 }
 .slider {
   /* nowrap applied to keep the words from changing wrap as drawer opens
