@@ -19,9 +19,24 @@
       <div class="card-body">
         <div class="input-group">
           <input type="text" v-model="student.name" class="form-control" />
+          <button class="btn btn-dark"
+            @click="toggleRuleMenu(student)" :disabled="addRuleIsDisabled">
+            Add Rule
+          </button>
         </div>
+
+        <div v-if="showClassMates && student.name === activeStudent.name">
+          <span v-for="(classMate, classMateIndex) of classMates" :key="classMateIndex"
+            @click="addClassMateToRules(student, classMate)"
+            class="badge rounded-pill bg-primary m-3 p-2 clickable">
+            {{ classMate.name }}
+          </span>
+        </div>
+        <!-- todo make a component that will write the rules in plain english
+        ie instead of 'separate: Jake' show 'Keep separated from Jake.' -->
         <div v-for="(rule, ruleIndex) of student.rules" :key="ruleIndex">
-          {{ rule.name }} | {{ rule.affects }}
+          <span class="mr-4">{{ rule.type }}: {{ rule.classMate }}</span>
+          <button class="btn btn-warning" @click="removeRule(student, rule)">Remove Rule</button>
         </div>
       </div>
     </section>
@@ -31,10 +46,11 @@
 </template>
 
 <script>
-// rule.name -- name of the rule type e.g. 'cant be with', 'must be with'
-// rule.affects -- name of the affected other student
-// e.g. on Nathans rule that he cant pair with Jake, Jake would be listed as rule.affects.
-// and on Jakes rule, Nathen would be listed as rule.affects
+// rule.type -- name of the rule type e.g. 'cant be with', 'must be with'
+// rule.classMate -- name of the affected other student
+// e.g. on Nathans rule that he cant pair with Jake, Jake would be listed as rule.classMate
+// and on Jakes rule, Nathen would be listed as rule.classMate
+// both would have rule.type = 'separate'
 export default {
   name: 'MyClass',
   data() {
@@ -43,13 +59,38 @@ export default {
       myClassName: '',
       myClassDisplayName: '',
       students: [],
+      activeStudent: null,
+      showClassMates: false,
     };
+  },
+  computed: {
+    addRuleIsDisabled() {
+      return this.students.length < 2;
+    },
+    classMates() {
+      return this.students.filter(student => {
+        return student.name !== this.activeStudent.name;
+      });
+    },
   },
   created() {
     this.myClassId = this.$route.params.myClassId;
     this.getClass();
   },
   methods: {
+    addClassMateToRules(student, classMate) {
+      student.rules.push({
+        type: 'separate',
+        classMate: classMate.name,
+      });
+      classMate.rules.push({
+        type: 'separate',
+        classMate: student.name,
+      });
+
+      this.toggleRuleMenu();
+      this.saveMyClass();
+    },
     addStudent() {
       const newStudent = {
         name: '',
@@ -60,12 +101,37 @@ export default {
     getClass() {
       const myClassJSON = localStorage.getItem(`myClass_${this.myClassId}`);
       if (!myClassJSON) {
-        return console.error('Error, no class found in localstorgae');
+        return console.error('Error, myclass not found in local storage');
       }
       const myClass = JSON.parse(myClassJSON);
       this.myClassName = myClass.myClassName;
       this.myClassDisplayName = myClass.myClassDisplayName;
       this.students = myClass.students;
+    },
+    toggleRuleMenu(student) {
+      if (student) {
+        this.showClassMates = true;
+        this.activeStudent = student;
+      } else {
+        this.showClassMates = false;
+        this.activeStudent = null;
+      }
+    },
+    removeRule(student, ruleToRemove) {
+      // find associated classmate and remove corresponding rule
+      const classMate = this.students.find(findStudent => {
+        return findStudent.name === ruleToRemove.classMate;
+      });
+      classMate.rules = classMate.rules.filter(rule => {
+        return rule.classMate !== student.name;
+      });
+
+      // remove rule from selected student
+      student.rules = student.rules.filter(rule => {
+        return rule.classMate !== ruleToRemove.classMate;
+      });
+
+      this.saveMyClass();
     },
     saveMyClass() {
       const classJSON = JSON.stringify({
@@ -96,4 +162,7 @@ export default {
 </script>
 
 <style scoped>
+.clickable:hover {
+  cursor: pointer;
+}
 </style>
