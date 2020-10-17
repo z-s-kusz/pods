@@ -1,12 +1,11 @@
 <template>
 <main class="container">
-  <div class="row">
-    <div class="col-sm">Class: {{ myClassDisplayName }}</div>
-    <div class="col-sm">
-      <button class="btn btn-primary" @click="assignToGroups()">{{ createGroupsButton }}</button>
-    </div>
-    <div class="col-sm">
+  <div class="d-flex align-items-center mt-2 mb-2">
+    <h3 class="fbf mr-2">{{ myClassDisplayName }}</h3>
+    <button class="fbf btn btn-primary" @click="assignToGroups()">{{ createGroupsButton }}</button>
+    <div class="fbf input-group ml-2">
       <select class="form-select" v-model="numberOfGroups">
+        <span># of Groups</span>
         <option v-for="(option, i) in numberOfGroupsOptions" :key="i" :value="option">
           {{ option }}
         </option>
@@ -125,10 +124,20 @@ export default {
   watch: {
     numberOfGroups() {
       this.createGroupObjects();
+      this.studentsAreGrouped = false;
     },
   },
 }
 </script>
 
 <style scoped>
+/* bootstrap override to get flexbox centering to work in top row :) / (: */
+h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+/* forget bootstrap flexbox */
+.fbf {
+  flex: 1 0 0%;
+}
 </style>
