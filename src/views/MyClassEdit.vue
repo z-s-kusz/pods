@@ -35,7 +35,9 @@
         <!-- todo make a component that will write the rules in plain english
         ie instead of 'separate: Jake' show 'Keep separated from Jake.' -->
         <div v-for="(rule, ruleIndex) of student.rules" :key="ruleIndex">
-          <span class="mr-4">{{ rule.type }}: {{ rule.classMate }}</span>
+          <active-rule-display v-bind:class-mate="rule.classMate"
+            v-bind:rule-type="rule.type">
+          </active-rule-display>
           <button class="btn btn-warning" @click="removeRule(student, rule)">Remove Rule</button>
         </div>
       </div>
@@ -51,8 +53,13 @@
 // e.g. on Nathans rule that he cant pair with Jake, Jake would be listed as rule.classMate
 // and on Jakes rule, Nathen would be listed as rule.classMate
 // both would have rule.type = 'separate'
+import ActiveRuleDisplay from '@/components/ActiveRuleDisplay.vue';
+
 export default {
   name: 'MyClass',
+  components: {
+    ActiveRuleDisplay,
+  },
   data() {
     return {
       myClassId: '',
