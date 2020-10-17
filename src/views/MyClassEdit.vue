@@ -17,12 +17,14 @@
     </p>
     <section v-for="(student, studentIndex) in students" :key="studentIndex" class="card">
       <div class="card-body">
+
         <div class="input-group">
           <input type="text" v-model="student.name" class="form-control" />
-          <button class="btn btn-dark"
-            @click="toggleRuleMenu(student)" :disabled="addRuleIsDisabled">
+          <button class="btn btn-dark" @click="toggleRuleMenu(student)"
+            :disabled="addRuleIsDisabled">
             Add Rule
           </button>
+          <button class="btn btn-warning" @click="removeStudentClick(student)">Delete</button>
         </div>
 
         <div v-if="showClassMates && student.name === activeStudent.name">
@@ -32,18 +34,21 @@
             {{ classMate.name }}
           </span>
         </div>
-        <!-- todo make a component that will write the rules in plain english
-        ie instead of 'separate: Jake' show 'Keep separated from Jake.' -->
-        <div v-for="(rule, ruleIndex) of student.rules" :key="ruleIndex">
+
+        <div v-for="(rule, ruleIndex) of student.rules" :key="ruleIndex"
+          class="d-flex justify-content-between align-items-center mt-2">
           <active-rule-display v-bind:class-mate="rule.classMate"
             v-bind:rule-type="rule.type">
           </active-rule-display>
           <button class="btn btn-warning" @click="removeRule(student, rule)">Remove Rule</button>
         </div>
+
       </div>
     </section>
     <button class="btn btn-primary" @click="addStudent()">Add Student</button>
   </div>
+
+  <confirm-modal v-on:close-modal="modalClose($event)" v-if="showConfirmModal"></confirm-modal>
 </main>
 </template>
 
@@ -54,11 +59,13 @@
 // and on Jakes rule, Nathen would be listed as rule.classMate
 // both would have rule.type = 'separate'
 import ActiveRuleDisplay from '@/components/ActiveRuleDisplay.vue';
+import ConfirmModal from '@/components/ConfirmModal.vue';
 
 export default {
   name: 'MyClass',
   components: {
     ActiveRuleDisplay,
+    ConfirmModal,
   },
   data() {
     return {
@@ -68,6 +75,8 @@ export default {
       students: [],
       activeStudent: null,
       showClassMates: false,
+      showConfirmModal: false,
+      studentToRemove: null,
     };
   },
   computed: {
@@ -96,7 +105,6 @@ export default {
       });
 
       this.toggleRuleMenu();
-      this.saveMyClass();
     },
     addStudent() {
       const newStudent = {
@@ -114,6 +122,18 @@ export default {
       this.myClassName = myClass.myClassName;
       this.myClassDisplayName = myClass.myClassDisplayName;
       this.students = myClass.students;
+    },
+    modalClose(confirm) {
+      if (confirm) {
+        this.students = this.students.filter(student => {
+          return student.name !== this.studentToRemove.name;
+        });
+
+        this.removeRulesOnClassMates();
+      }
+
+      this.showConfirmModal = false;
+      this.studentToRemove = null;
     },
     toggleRuleMenu(student) {
       if (student) {
@@ -137,8 +157,25 @@ export default {
       student.rules = student.rules.filter(rule => {
         return rule.classMate !== ruleToRemove.classMate;
       });
-
-      this.saveMyClass();
+    },
+    // when a student is removed they might be listed as the subject of a rule on another student,
+    // removeRulesOnClassMates() finds and deletes those references to the now deleted student
+    removeRulesOnClassMates() {
+      this.studentToRemove.rules.forEach(rule => {
+        this.students.find(classMate => {
+          if (classMate.name === rule.classMate) {
+            classMate.rules = classMate.rules.filter(filterRule => {
+              return filterRule.classMate !== this.studentToRemove.name;
+            });
+            return true;
+          }
+          return false;
+        });
+      });
+    },
+    removeStudentClick(student) {
+      this.studentToRemove = student;
+      this.showConfirmModal = true;
     },
     saveMyClass() {
       const classJSON = JSON.stringify({
