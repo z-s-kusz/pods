@@ -1,16 +1,17 @@
 <template>
 <main class="container">
+
   <div class="d-flex align-items-center mt-2 mb-2">
     <h3 class="fbf mr-2">{{ myClassDisplayName }}</h3>
-    <button class="fbf btn btn-primary" @click="assignToGroups()">{{ createGroupsButton }}</button>
-    <div class="fbf input-group ml-2">
+    <div class="fbf input-group">
+      <span class="input-group-text">Groups</span>
       <select class="form-select" v-model="numberOfGroups">
-        <span># of Groups</span>
         <option v-for="(option, i) in numberOfGroupsOptions" :key="i" :value="option">
           {{ option }}
         </option>
       </select>
     </div>
+    <button class="fbf btn btn-primary ml-2" @click="assignToGroups()">{{ createGroupsButton }}</button>
   </div>
 
   <div v-if="studentsAreGrouped" class="d-flex justify-content-evenly border border-primary">
