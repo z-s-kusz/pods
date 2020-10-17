@@ -29,6 +29,6 @@ export default {
   white-space: nowrap;
 }
 .margin-top-hamburger {
-  margin-top: 28px;
+  margin-top: 36px;
 }
 </style>
