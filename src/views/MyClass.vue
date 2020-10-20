@@ -11,29 +11,30 @@
         </option>
       </select>
     </div>
-    <button class="fbf btn btn-dark ml-2" @click="assignToGroups()">{{ createGroupsButton }}</button>
+    <button class="fbf btn btn-dark ml-2" @click="assignToGroups()">Create Groups!</button>
   </div>
 
-  <div v-if="studentsAreGrouped" class="d-flex justify-content-evenly border border-dark rounded p-3">
-    <div v-for="(group, groupIndex) in groups" :key="groupIndex"
-      class="border">
-      <div class="text-center m-2">{{ group.name }}</div>
-      <draggable :list="group.students" class="d-flex flex-column" group="students">
-        <span v-for="student in group.students" :key="student.id"
-          class="badge rounded-pill bg-primary bg-gradient m-3 p-3">
-          {{ student.name }}
-        </span>
-      </draggable>
+  <transition name="from-right-bounce">
+    <div v-if="studentsAreGrouped" class="d-flex justify-content-evenly border border-dark rounded p-3" key="if">
+      <div v-for="(group, groupIndex) in groups" :key="groupIndex"
+        class="border">
+        <div class="text-center m-2">{{ group.name }}</div>
+        <draggable :list="group.students" class="d-flex flex-column" group="students">
+          <span v-for="student in group.students" :key="student.id"
+            class="badge rounded-pill bg-primary bg-gradient m-3 p-3">
+            {{ student.name }}
+          </span>
+        </draggable>
+      </div>
     </div>
-  </div>
 
-  <div v-else class="d-flex flex-wrap justify-content-center border border-primary">
-    <span v-for="student in students" :key="student.id"
-      class="badge rounded-pill bg-primary m-3 p-3 h3">
-      {{ student.name }}
-    </span>
-  </div>
-
+    <div v-else class="d-flex flex-wrap justify-content-center border border-primary" key="else">
+      <span v-for="student in students" :key="student.id"
+        class="badge rounded-pill bg-primary m-3 p-3 h3">
+        {{ student.name }}
+      </span>
+    </div>
+  </transition>
 </main>
 </template>
 
@@ -59,9 +60,6 @@ export default {
     };
   },
   computed: {
-    createGroupsButton() {
-      return this.studentsAreGrouped ? 'Regroup' : 'Create Groups!';
-    },
     myClassName() {
       if (this.myClass) {
         return this.myClass.myClassDisplayName || this.myClass.myClassName;
@@ -72,6 +70,11 @@ export default {
   },
   created() {
     this.myClassId = this.$route.params.myClassId;
+    this.getClass();
+    this.createGroupObjects();
+  },
+  beforeRouteUpdate(to, from) {
+    this.myClassId = to.params.myClassId;
     this.getClass();
     this.createGroupObjects();
   },
@@ -205,5 +208,12 @@ h3 {
 }
 .badge {
   font-size: 1rem;
+}
+
+.from-right-bounce-enter-active {
+  transition: transform 800ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.from-right-bounce-enter {
+  transform: translateX(-100%);
 }
 </style>
