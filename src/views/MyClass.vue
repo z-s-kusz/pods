@@ -2,7 +2,7 @@
 <main class="container">
 
   <div class="d-flex align-items-center mt-2 mb-2">
-    <h3 class="fbf mr-2">{{ myClassName }}</h3>
+    <h3 class="fbf text-center mr-2">{{ myClassName }}</h3>
     <div class="fbf input-group">
       <span class="input-group-text">Number of Groups</span>
       <select class="form-select" v-model="numberOfGroups">
@@ -15,9 +15,10 @@
   </div>
 
   <transition name="from-right-bounce">
-    <div v-if="studentsAreGrouped" class="d-flex justify-content-evenly border border-dark rounded p-3" key="if">
+    <div v-if="studentsAreGrouped" key="if"
+      class="d-flex flex-wrap justify-content-evenly border border-dark rounded">
       <div v-for="(group, groupIndex) in groups" :key="groupIndex"
-        class="border">
+        class="border border-dark rounded m-3">
         <div class="text-center m-2">{{ group.name }}</div>
         <draggable :list="group.students" class="d-flex flex-column" group="students">
           <span v-for="student in group.students" :key="student.id"
