@@ -11,7 +11,8 @@
     </div>
   </section>
 
-  <!-- empty v-on:submit allows us to call the addStudent button on 'enter' -->
+  <!-- empty v-on:submit allows us to call the addStudent button on 'enter' 
+    make sure any new buttons get type="button" so they are not called on submit -->
   <form class="align-items-center" v-on:submit.prevent="">
     <p v-if="students.length < 1" class="text-center">
       No Students added to this class yet.
@@ -43,7 +44,8 @@
           <active-rule-display v-bind:class-mate="rule.classMate"
             v-bind:rule-type="rule.type">
           </active-rule-display>
-          <button class="btn btn-warning" @click="removeRule(student, rule)">Remove Rule</button>
+          <button class="btn btn-warning" @click="removeRule(student, rule)"
+            type="button">Remove Rule</button>
         </div>
 
       </div>
@@ -162,7 +164,7 @@ export default {
         return parseInt(student.id);
       }).sort();
 
-if (sortedIds.length > 0) {
+      if (sortedIds.length > 0) {
         return this.previousStudentId = sortedIds[sortedIds.length - 1];
       }
       this.setPreviousStudentId = 0;
