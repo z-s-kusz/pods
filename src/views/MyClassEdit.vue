@@ -77,6 +77,7 @@ export default {
       showClassMates: false,
       showConfirmModal: false,
       studentToRemove: null,
+      previousStudentId: 0,
     };
   },
   computed: {
@@ -92,16 +93,19 @@ export default {
   created() {
     this.myClassId = this.$route.params.myClassId;
     this.getClass();
+    this.setPreviousStudentId();
   },
   methods: {
     addClassMateToRules(student, classMate) {
       student.rules.push({
         type: 'separate',
         classMate: classMate.name,
+        classMateId: classMate.id,
       });
       classMate.rules.push({
         type: 'separate',
         classMate: student.name,
+        classMateId: student.id,
       });
 
       this.toggleRuleMenu();
@@ -110,6 +114,7 @@ export default {
       const newStudent = {
         name: '',
         rules: [],
+        id: this.getNextId(),
       };
       this.students.push(newStudent);
     },
@@ -123,6 +128,11 @@ export default {
       this.myClassDisplayName = myClass.myClassDisplayName;
       this.students = myClass.students;
     },
+    getNextId() {
+      const nextId = this.previousStudentId;
+      this.previousStudentId++;
+      return nextId;
+    },
     modalClose(confirm) {
       if (confirm) {
         this.students = this.students.filter(student => {
@@ -134,6 +144,16 @@ export default {
 
       this.showConfirmModal = false;
       this.studentToRemove = null;
+    },
+    setPreviousStudentId() {
+      const sortedIds = this.students.map(student => {
+        return parseInt(student.id);
+      }).sort();
+
+      if (sortedIds.length > 0) {
+        return this.previousStudentId = sortedIds[sortedIds.length - 1];
+      }
+      this.setPreviousStudentId = 0;
     },
     toggleRuleMenu(student) {
       if (student) {
@@ -147,15 +167,15 @@ export default {
     removeRule(student, ruleToRemove) {
       // find associated classmate and remove corresponding rule
       const classMate = this.students.find(findStudent => {
-        return findStudent.name === ruleToRemove.classMate;
+        return findStudent.id === ruleToRemove.classMateId;
       });
       classMate.rules = classMate.rules.filter(rule => {
-        return rule.classMate !== student.name;
+        return rule.classMateId !== student.id;
       });
 
       // remove rule from selected student
       student.rules = student.rules.filter(rule => {
-        return rule.classMate !== ruleToRemove.classMate;
+        return rule.classMateId !== ruleToRemove.classMateId;
       });
     },
     // when a student is removed they might be listed as the subject of a rule on another student,
@@ -163,9 +183,9 @@ export default {
     removeRulesOnClassMates() {
       this.studentToRemove.rules.forEach(rule => {
         this.students.find(classMate => {
-          if (classMate.name === rule.classMate) {
+          if (classMate.id === rule.classMateId) {
             classMate.rules = classMate.rules.filter(filterRule => {
-              return filterRule.classMate !== this.studentToRemove.name;
+              return filterRule.classMateId !== this.studentToRemove.id;
             });
             return true;
           }

@@ -2,7 +2,7 @@
 <main class="container">
 
   <div class="d-flex align-items-center mt-2 mb-2">
-    <h3 class="fbf mr-2">{{ myClassDisplayName }}</h3>
+    <h3 class="fbf mr-2">{{ myClassName }}</h3>
     <div class="fbf input-group">
       <span class="input-group-text">Number of Groups</span>
       <select class="form-select" v-model="numberOfGroups">
@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       myClassId: '',
-      myClassDisplayName: '',
+      myClass: null,
       students: [],
       groups: [],
       numberOfGroups: 2,
@@ -55,13 +55,20 @@ export default {
     createGroupsButton() {
       return this.studentsAreGrouped ? 'Regroup' : 'Create Groups!';
     },
+    myClassName() {
+      if (this.myClass) {
+        return this.myClass.myClassDisplayName || this.myClass.myClassName;
+      } else {
+        return 'Class List';
+      }
+    }
   },
   created() {
     this.myClassId = this.$route.params.myClassId;
     this.getClass();
     this.createGroupObjects();
   },
-  // rule is {type: 'seperate', classMate: 'Jack'}[]
+  // rule is {type: 'seperate', classMate: 'Jack', classMateId: '3' }[]
   methods: {
     assignToGroups() {
       if (this.studentsAreGrouped) {
@@ -121,9 +128,8 @@ export default {
       if (!myClassJSON) {
         return console.error('Error getting myClass data');
       }
-      const myClass = JSON.parse(myClassJSON);
-      this.myClassDisplayName = myClass.myClassDisplayName;
-      this.students = this.shuffleArray(myClass.students);
+      this.myClass = JSON.parse(myClassJSON);
+      this.students = this.shuffleArray(this.myClass.students);
     },
     getNextGroupIndex(index) {
       index++;
@@ -157,18 +163,18 @@ export default {
         // so I want to keep each if statment's logic appart
         if (rule.type === 'separate') {
           const isPaired = group.students.find(classMate => {
-            return classMate.name === rule.classMate;
+            return classMate.id === rule.classMateId;
           });
           if (isPaired) studentCanGoInGroup = false;
         } else if (rule.type === 'paired') {
           const isPaired = group.students.find(classMate => {
-            return classMate.name === rule.classMate;
+            return classMate.id === rule.classMateId;
           });
           if (!isPaired) studentCanGoInGroup = false;
         }
       });
 
-      return studentCanGoInGroup;
+return studentCanGoInGroup;
     }
   },
   watch: {
