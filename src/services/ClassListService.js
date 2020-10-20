@@ -1,7 +1,6 @@
 import Vue from 'vue';
 
 const setClassList = function(classList) {
-  console.log('is called', classList)
   store.classList = classList;
 };
 
