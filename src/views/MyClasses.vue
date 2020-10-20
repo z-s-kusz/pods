@@ -1,10 +1,10 @@
 <template>
 <main class="container">
   <h1>My Classes</h1>
-  <div v-for="myClass in myClasses" :key="myClass.myClassId" class="card">
+  <div v-for="myClass in myClasses" :key="myClass.myClassId" class="card mb-3">
     <div class="card-body d-flex justify-content-between align-items-center">
       <h3 @click="goTo('myClass', myClass.myClassId)">
-        {{ myClass.myClassName || 'No Name! Click \'Edit\' to add a name.' }}
+        {{ getClassTitle(myClass) }}
       </h3>
       <div class="d-flex justify-content-end">
         <button class="btn btn-dark m-2" @click="goTo('myClass', myClass.myClassId)">Group</button>
@@ -76,10 +76,18 @@ export default {
       });
       const classStorageIdsJSON = JSON.stringify(this.classStorageIds);
       localStorage.setItem('classStorageIds', classStorageIdsJSON);
+      classListService.setClassList(this.myClasses);
     },
     deleteClassClicked(myClassId) {
       this.activeClassId = myClassId;
       this.showConfirmModal = true;
+    },
+    getClassTitle(myClass) {
+      if (myClass.myClassName) {
+        const displayName = myClass.myClassDisplayName ? ` (${myClass.myClassDisplayName})` : '';
+        return myClass.myClassName + displayName;
+      }
+      return '\'Edit\' to add name!';
     },
     getMyClasses() {
       const classesListJSON = localStorage.getItem('classStorageIds');
