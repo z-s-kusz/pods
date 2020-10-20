@@ -1,7 +1,7 @@
 <template>
 <main class="container">
-  <section class="row align-items-center border border-secondary">
-    <div class="input-group">
+  <section class="row align-items-center mb-3">
+    <div class="input-group mb-2">
       <span class="input-group-text">Class Name</span>
       <input type="text" v-model="myClassName" class="form-control" v-on:input="classNameInput()" />
     </div>
@@ -11,20 +11,23 @@
     </div>
   </section>
 
-  <div class="row align-items-center border border-secondary">
+  <!-- empty v-on:submit allows us to call the addStudent button on 'enter' -->
+  <form class="align-items-center" v-on:submit.prevent="">
     <p v-if="students.length < 1" class="text-center">
       No Students added to this class yet.
     </p>
-    <section v-for="(student, studentIndex) in students" :key="studentIndex" class="card">
+    <section v-for="student in students" :key="student.id" class="card mb-3">
       <div class="card-body">
 
         <div class="input-group">
-          <input type="text" v-model="student.name" class="form-control" />
+          <input type="text" v-model="student.name" class="form-control"
+            ref="studentInput" />
           <button class="btn btn-dark" @click="toggleRuleMenu(student)"
+            type="button"
             :disabled="addRuleIsDisabled">
             Add Rule
           </button>
-          <button class="btn btn-warning" @click="removeStudentClick(student)">Delete</button>
+          <button class="btn btn-warning" @click="removeStudentClick(student)" type="button">Delete</button>
         </div>
 
         <div v-if="showClassMates && student.name === activeStudent.name">
@@ -45,10 +48,10 @@
 
       </div>
     </section>
-    <button class="btn btn-primary" @click="addStudent()">Add Student</button>
-  </div>
+    <button class="btn btn-primary" @click="addStudent()" type="submit">Add Student</button>
+  </form>
 
-  <confirm-modal v-on:close-modal="modalClose($event)" v-if="showConfirmModal"></confirm-modal>
+  <confirm-modal v-on:close-modal="deleteConfirm($event)" v-if="showConfirmModal"></confirm-modal>
 </main>
 </template>
 
@@ -115,9 +118,13 @@ export default {
       const newStudent = {
         name: '',
         rules: [],
-        id: this.getNextId(),
+        id: this.previousStudentId+ 1,
       };
+      this.previousStudentId++;
       this.students.push(newStudent);
+      setTimeout(() => {
+        this.focusNewStudentEntry();
+      }, 50);
     },
     classNameInput() {
       this.saveMyClass();
@@ -133,15 +140,10 @@ export default {
       this.myClassDisplayName = myClass.myClassDisplayName;
       this.students = myClass.students;
     },
-    getNextId() {
-      const nextId = this.previousStudentId;
-      this.previousStudentId++;
-      return nextId;
-    },
-    modalClose(confirm) {
+    deleteConfirm(confirm) {
       if (confirm) {
         this.students = this.students.filter(student => {
-          return student.name !== this.studentToRemove.name;
+          return student.id !== this.studentToRemove.id;
         });
 
         this.removeRulesOnClassMates();
@@ -150,12 +152,17 @@ export default {
       this.showConfirmModal = false;
       this.studentToRemove = null;
     },
+    focusNewStudentEntry() {
+      const inputArray = this.$refs.studentInput;
+      const lastInputIndex = inputArray.length - 1;
+      inputArray[lastInputIndex].focus();
+    },
     setPreviousStudentId() {
       const sortedIds = this.students.map(student => {
         return parseInt(student.id);
       }).sort();
 
-      if (sortedIds.length > 0) {
+if (sortedIds.length > 0) {
         return this.previousStudentId = sortedIds[sortedIds.length - 1];
       }
       this.setPreviousStudentId = 0;
