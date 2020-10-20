@@ -20,14 +20,14 @@
       <div class="text-center m-2">{{ group.name }}</div>
       <draggable :list="group.students" class="d-flex flex-column" group="students">
         <span v-for="student in group.students" :key="student.id"
-          class="badge rounded-pill bg-primary m-3 p-3 h3">
+          class="badge rounded-pill bg-primary bg-gradient m-3 p-3">
           {{ student.name }}
         </span>
       </draggable>
     </div>
   </div>
 
-  <div v-else class="d-flex border border-primary">
+  <div v-else class="d-flex justify-content-center border border-primary">
     <span v-for="student in students" :key="student.id"
       class="badge rounded-pill bg-primary m-3 p-3 h3">
       {{ student.name }}
@@ -202,5 +202,8 @@ h3 {
 /* forget bootstrap flexbox */
 .fbf {
   flex: 1 0 0%;
+}
+.badge {
+  font-size: 1rem;
 }
 </style>

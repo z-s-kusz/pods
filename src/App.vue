@@ -4,7 +4,15 @@
     <router-link to="/myClasses">My Classes</router-link>
     <router-link to="/about">About</router-link>
   </slide>
-  <h1 class="text-center margin-top-hamburger">Pods</h1>
+  <!-- inline styled to get around the vue css preloader breaking compile because this
+  very new css is 'not valid' when added to the css -->
+  <h1 class="text-center margin-top-hamburger fancy-text"
+    style="{
+      -webkit-text-fill-color: transparent;
+      text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+    }">Group Randomizer</h1>
   <router-view/>
 </div>
 </template>
@@ -17,7 +25,9 @@ export default {
   },
 }
 </script>
+
 <style>
+
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500&display=swap');
 
 * {
@@ -30,5 +40,8 @@ export default {
 }
 .margin-top-hamburger {
   margin-top: 36px;
+}
+.fancy-text {
+  background: linear-gradient(25deg, #fd7e14 40%, #0d6efd 60%);
 }
 </style>
