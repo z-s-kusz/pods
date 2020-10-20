@@ -120,7 +120,7 @@ export default {
       const newStudent = {
         name: '',
         rules: [],
-        id: this.previousStudentId+ 1,
+        id: this.previousStudentId + 1,
       };
       this.previousStudentId++;
       this.students.push(newStudent);
@@ -162,7 +162,7 @@ export default {
     setPreviousStudentId() {
       const sortedIds = this.students.map(student => {
         return parseInt(student.id);
-      }).sort();
+      }).sort((a, b) => a - b);
 
       if (sortedIds.length > 0) {
         return this.previousStudentId = sortedIds[sortedIds.length - 1];
