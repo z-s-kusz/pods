@@ -1,7 +1,11 @@
 <template>
 <div id="app">
   <slide :closeOnNavigation="true" class="slider">
-    <router-link to="/myClasses">My Classes</router-link>
+    <router-link to="/myClasses">Edit My Classes</router-link>
+    <router-link v-for="myClass in myClasses" :key="myClass.myClassId"
+      :to="`/myClass/${myClass.myClassId}`">
+      {{ myClass.myClassDisplayName || myClass.myClassName }}
+    </router-link>
     <router-link to="/about">About</router-link>
   </slide>
   <!-- inline styled to get around the vue css preloader breaking compile because this
@@ -19,9 +23,19 @@
 
 <script>
 import { Slide } from 'vue-burger-menu';
+import classListService from '@/services/ClassListService';
+
 export default {
   components: {
     Slide,
+  },
+  computed: {
+    myClasses() {
+      return classListService.store.classList;
+    },
+  },
+  created() {
+    classListService.initializeClassListFromLocalStorage();
   },
 }
 </script>

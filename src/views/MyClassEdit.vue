@@ -3,11 +3,11 @@
   <section class="row align-items-center border border-secondary">
     <div class="input-group">
       <span class="input-group-text">Class Name</span>
-      <input type="text" v-model="myClassName" class="form-control" />
+      <input type="text" v-model="myClassName" class="form-control" v-on:input="classNameInput()" />
     </div>
     <div class="input-group">
       <span class="input-group-text">Name Students Will See</span>
-      <input type="text" v-model="myClassDisplayName" class="form-control" />
+      <input type="text" v-model="myClassDisplayName" class="form-control" v-on:input="classNameInput()" />
     </div>
   </section>
 
@@ -60,6 +60,7 @@
 // both would have rule.type = 'separate'
 import ActiveRuleDisplay from '@/components/ActiveRuleDisplay.vue';
 import ConfirmModal from '@/components/ConfirmModal.vue';
+import classListService from '@/services/ClassListService';
 
 export default {
   name: 'MyClass',
@@ -117,6 +118,10 @@ export default {
         id: this.getNextId(),
       };
       this.students.push(newStudent);
+    },
+    classNameInput() {
+      this.saveMyClass();
+      this.saveMyClassInService();
     },
     getClass() {
       const myClassJSON = localStorage.getItem(`myClass_${this.myClassId}`);
@@ -206,6 +211,14 @@ export default {
       });
       localStorage.setItem(`myClass_${this.myClassId}`, classJSON);
     },
+    saveMyClassInService() {
+      classListService.updateClass({
+        myClassId: this.myClassId,
+        myClassName: this.myClassName,
+        myClassDisplayName: this.myClassDisplayName,
+        students: this.students,
+      });
+    },
   },
   // todo find a better way to autosave without deep watcher? or at least debounce it
   watch: {
@@ -214,12 +227,6 @@ export default {
       handler() {
         this.saveMyClass();
       },
-    },
-    myClassName() {
-      this.saveMyClass();
-    },
-    myClassDisplayName() {
-      this.saveMyClass();
     },
   },
 }

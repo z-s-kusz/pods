@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <div v-else class="d-flex justify-content-center border border-primary">
+  <div v-else class="d-flex flex-wrap justify-content-center border border-primary">
     <span v-for="student in students" :key="student.id"
       class="badge rounded-pill bg-primary m-3 p-3 h3">
       {{ student.name }}

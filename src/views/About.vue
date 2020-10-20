@@ -1,5 +1,6 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+<main class="container text-center">
+  <h1>About</h1>
+  <p>By <a href="https://github.com/z-s-kusz" target="_blank">Zach Kusz</a>, for Laura!</p>
+</main>
 </template>

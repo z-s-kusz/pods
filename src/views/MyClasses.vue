@@ -3,11 +3,12 @@
   <h1>My Classes</h1>
   <div v-for="myClass in myClasses" :key="myClass.myClassId" class="card">
     <div class="card-body d-flex justify-content-between align-items-center">
-      <router-link :to="`myClass/${myClass.myClassId}`">
-        {{ myClass.myClassName || 'No Name! Edit to add a name!' }}
-      </router-link>
-      <div>
-        <button class="btn btn-dark m-2" @click="goToEdit(myClass.myClassId)">Edit</button>
+      <h3 @click="goTo('myClass', myClass.myClassId)">
+        {{ myClass.myClassName || 'No Name! Click \'Edit\' to add a name.' }}
+      </h3>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-dark m-2" @click="goTo('myClass', myClass.myClassId)">Group</button>
+        <button class="btn btn-dark m-2" @click="goTo('myClassEdit', myClass.myClassId)">Edit</button>
         <button class="btn btn-warning m-2" @click="deleteClassClicked(myClass.myClassId)">Delete</button>
       </div>
     </div>
@@ -22,6 +23,7 @@
 
 <script>
 import ConfirmModal from '@/components/ConfirmModal.vue';
+import classListService from '@/services/ClassListService';
 
 export default {
   name: 'MyClasses',
@@ -50,6 +52,7 @@ export default {
       };
 
       this.myClasses.push(myClass);
+      classListService.setClassList(this.myClasses);
       const myClassJSON = JSON.stringify(myClass);
       const storageId = `myClass_${classId}`;
       localStorage.setItem(storageId, myClassJSON);
@@ -58,7 +61,7 @@ export default {
       const classStorageIdsJSON = JSON.stringify(this.classStorageIds)
       localStorage.setItem('classStorageIds', classStorageIdsJSON);
 
-      this.goToEdit(classId);
+      this.goTo('myClassEdit', classId);
     },
     deleteClass() {
       const storageId = `myClass_${this.activeClassId}`;
@@ -101,10 +104,14 @@ export default {
       const latestClass = this.myClasses[this.myClasses.length - 1];
       return parseInt(latestClass.myClassId) + 1 + '';
     },
-    goToEdit(id) {
-      this.$router.push({ 
-        path: `myClasses/${id}/edit`,
-      });
+    goTo(route, id) {
+      let config = {};
+      if (route === 'myClassEdit') {
+        config.path = `myClasses/${id}/edit`;
+      } else if (route === 'myClass') {
+        config.path = `myClass/${id}`;
+      }
+      this.$router.push(config);
     },
     modalClose(confirm) {
       if (confirm) {
@@ -118,5 +125,8 @@ export default {
 </script>
 
 <style scoped>
-
+h3 {
+  margin-bottom: 0;
+  cursor: pointer;
+}
 </style>
