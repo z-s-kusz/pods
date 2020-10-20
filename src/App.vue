@@ -17,7 +17,9 @@
       -webkit-background-clip: text;
       background-clip: text;
     }">Group Randomizer</h1>
-  <router-view/>
+  <transition name="fade-in">
+    <router-view/>
+  </transition>
 </div>
 </template>
 
@@ -57,5 +59,12 @@ export default {
 }
 .fancy-text {
   background: linear-gradient(25deg, #fd7e14 40%, #0d6efd 60%);
+}
+
+.fade-in-enter-active {
+  transition: opacity .5s;
+}
+.fade-in-enter {
+  opacity: 0;
 }
 </style>
