@@ -16,17 +16,19 @@
 
   <div v-if="studentsAreGrouped" class="d-flex justify-content-evenly border border-dark rounded p-3">
     <div v-for="(group, groupIndex) in groups" :key="groupIndex"
-      class="border d-flex flex-column">
+      class="border">
       <div class="text-center m-2">{{ group.name }}</div>
-      <span v-for="(student, studentIndex) in group.students" :key="studentIndex"
-        class="badge rounded-pill bg-primary m-3 p-3 h3">
-        {{ student.name }}
-      </span>
+      <draggable :list="group.students" class="d-flex flex-column" group="students">
+        <span v-for="student in group.students" :key="student.id"
+          class="badge rounded-pill bg-primary m-3 p-3 h3">
+          {{ student.name }}
+        </span>
+      </draggable>
     </div>
   </div>
 
   <div v-else class="d-flex border border-primary">
-    <span v-for="student in students" :key="student.name"
+    <span v-for="student in students" :key="student.id"
       class="badge rounded-pill bg-primary m-3 p-3 h3">
       {{ student.name }}
     </span>
@@ -36,8 +38,13 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable';
+
 export default {
   name: 'MyClass',
+  components: {
+    draggable,
+  },
   data() {
     return {
       myClassId: '',
