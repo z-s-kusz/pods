@@ -92,7 +92,10 @@ export default {
     },
     classMates() {
       return this.students.filter(student => {
-        return student.name !== this.activeStudent.name;
+        const isAlreadyInRules = this.activeStudent.rules.find(rule => {
+          return rule.classMateId === student.id;
+        });
+        return student.id !== this.activeStudent.id && !isAlreadyInRules;
       });
     },
   },
