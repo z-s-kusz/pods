@@ -88,12 +88,15 @@ export default {
       }
 
       let groupIndex = 0;
-      const studentsWithRules = [];
+      let studentsWithRules = [];
       const studentsNoRules = [];
       this.students.forEach(student => {
         if (student.rules.length > 0) studentsWithRules.push(student);
         else studentsNoRules.push(student);
       });
+
+      // it's easier to place students with more rules correctly if they are placed first
+      studentsWithRules = this.orderByMostDifficultStudents(studentsWithRules);
 
       studentsWithRules.forEach(student => {
         let group = this.groups[groupIndex];
@@ -118,6 +121,9 @@ export default {
         groupIndex = this.getNextGroupIndex(groupIndex);
       });
 
+      // trouble students are sorted first - they might see a pattern in the resulting groups
+      // so we will shuffle the order of students and groups after groups are formed
+      this.shuffleGroups();
       this.studentsAreGrouped = true;
     },
     createGroupObjects() {
@@ -162,6 +168,12 @@ export default {
       }
       return array;
     },
+    shuffleGroups() {
+      this.groups = this.shuffleArray(this.groups);
+      this.groups.forEach(group => {
+        group.students = this.shuffleArray(group.students);
+      });
+    },
     studentCanGoInGroup(student, group) {
       let studentCanGoInGroup = true;
 
@@ -183,7 +195,12 @@ export default {
       });
 
       return studentCanGoInGroup;
-    }
+    },
+    orderByMostDifficultStudents(students) {
+      return students.sort((a, b) => {
+        return b.rules.length - a.rules.length;
+      });
+    },
   },
   watch: {
     numberOfGroups() {
