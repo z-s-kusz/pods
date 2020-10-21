@@ -47,12 +47,12 @@
         <div v-if="showClassMates && student.name === activeStudent.name">
           <div v-for="(classMate, classMateIndex) of classMates" :key="classMateIndex"
             class="rule-container badge bg-primary m-3 p-2">
-            <div class="h3 clickable"
+            <div class="h4 clickable"
               @click="addClassMateToRules(student, classMate, 'pair')">
               ( + )
             </div>
             <span>{{ classMate.name }}</span>
-            <div class="h3 clickable"
+            <div class="h4 clickable"
               @click="addClassMateToRules(student, classMate, 'separate')">
               ( - )
             </div>
@@ -276,7 +276,7 @@ export default {
   margin-bottom: 0;
   margin-top: .5rem
 }
-.rule-container .h3 {
+.rule-container .h4 {
   font-family: monospace;
 }
 </style>
