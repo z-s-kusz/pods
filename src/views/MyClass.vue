@@ -186,7 +186,7 @@ export default {
             return classMate.id === rule.classMateId;
           });
           if (isPaired) studentCanGoInGroup = false;
-        } else if (rule.type === 'paired') {
+        } else if (rule.type === 'pair') {
           const isPaired = group.students.find(classMate => {
             return classMate.id === rule.classMateId;
           });

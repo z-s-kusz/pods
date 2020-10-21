@@ -12,7 +12,7 @@ export default {
     ruleText() {
       if (this.ruleType === 'separate') {
         return `Separated from ${this.classMate}.`;
-      } else if (this.ruleType === 'paired') {
+      } else if (this.ruleType === 'pair') {
         return `Paired with ${this.classMate}.`;
       } else {
         return `${this.ruleType} | ${this.classMate}.`;
