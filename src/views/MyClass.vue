@@ -65,7 +65,7 @@ export default {
       if (this.myClass) {
         return this.myClass.myClassDisplayName || this.myClass.myClassName;
       } else {
-        return 'Class List';
+        return 'My Class';
       }
     }
   },
@@ -147,9 +147,6 @@ export default {
       if (index < this.numberOfGroups) return index;
       else return 0;
     },
-    getRandomIndex(max) {
-      return Math.floor(Math.random() * Math.floor(max));
-    },
     shuffleArray(array) {
       let currentIndex = array.length;
       let temporaryValue;
@@ -185,7 +182,7 @@ export default {
         }
       });
 
-return studentCanGoInGroup;
+      return studentCanGoInGroup;
     }
   },
   watch: {
