@@ -1,5 +1,5 @@
 <template>
-<main class="container">
+<main class="container mb-3">
   <section class="row align-items-center mb-3">
     <div class="input-group mb-2">
       <span class="input-group-text">Class Name</span>
