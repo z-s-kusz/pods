@@ -10,7 +10,20 @@
       <input type="text" v-model="myClassDisplayName" class="form-control" v-on:input="classNameInput()" />
     </div>
   </section>
-
+  <button class="btn btn-dark" type="button" @click="toggleHelp()">Toggle Help</button>
+  <div v-show="showHelp" class="mt-3">
+  <h6>Adding Rules</h6>
+    <p>Click '( + )' to make the students pair together. The group generator will
+        prioritize keeping these students grouped</p>
+    <p>Click '( - )' to keep the students separated. The generator will prioritize
+      keeping these students apart during grouping</p>
+    <p>More rules may result in frequently unbalanced groups being generated.</p>
+    <p>If the rules are impossible to follow the generator will place students into
+      groups that break the rules so no student is left out.</p>
+    <p>You can drag and drop students to different groups after they are
+      made or keep trying to generate groups until they fit.
+    </p>
+  </div>
   <!-- empty v-on:submit allows us to call the addStudent button on 'enter' 
     make sure any new buttons get type="button" so they are not called on submit -->
   <form class="align-items-center" v-on:submit.prevent="">
@@ -32,11 +45,18 @@
         </div>
 
         <div v-if="showClassMates && student.name === activeStudent.name">
-          <span v-for="(classMate, classMateIndex) of classMates" :key="classMateIndex"
-            @click="addClassMateToRules(student, classMate)"
-            class="badge rounded-pill bg-primary m-3 p-2 clickable">
-            {{ classMate.name }}
-          </span>
+          <div v-for="(classMate, classMateIndex) of classMates" :key="classMateIndex"
+            class="rule-container badge bg-primary m-3 p-2">
+            <div class="h3 clickable"
+              @click="addClassMateToRules(student, classMate, 'pair')">
+              ( + )
+            </div>
+            <span>{{ classMate.name }}</span>
+            <div class="h3 clickable"
+              @click="addClassMateToRules(student, classMate, 'separate')">
+              ( - )
+            </div>
+          </div>
         </div>
 
         <div v-for="(rule, ruleIndex) of student.rules" :key="ruleIndex"
@@ -84,6 +104,7 @@ export default {
       showConfirmModal: false,
       studentToRemove: null,
       previousStudentId: 0,
+      showHelp: false,
     };
   },
   computed: {
@@ -105,14 +126,14 @@ export default {
     this.setPreviousStudentId();
   },
   methods: {
-    addClassMateToRules(student, classMate) {
+    addClassMateToRules(student, classMate, type) {
       student.rules.push({
-        type: 'separate',
+        type,
         classMate: classMate.name,
         classMateId: classMate.id,
       });
       classMate.rules.push({
-        type: 'separate',
+        type,
         classMate: student.name,
         classMateId: student.id,
       });
@@ -171,6 +192,9 @@ export default {
         return this.previousStudentId = sortedIds[sortedIds.length - 1];
       }
       this.setPreviousStudentId = 0;
+    },
+    toggleHelp() {
+      this.showHelp = !this.showHelp;
     },
     toggleRuleMenu(student) {
       if (student) {
@@ -247,5 +271,12 @@ export default {
 <style scoped>
 .clickable:hover {
   cursor: pointer;
+}
+.clickable:nth-child(3) {
+  margin-bottom: 0;
+  margin-top: .5rem
+}
+.rule-container .h3 {
+  font-family: monospace;
 }
 </style>
